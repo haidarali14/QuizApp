@@ -17,6 +17,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { path: '/admin/quizzes', label: 'My Quizzes', icon: '📝' },
   ];
 
+  const handleNavClick = () => {
+    onClose();
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -40,7 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <h1 className="text-xl font-semibold text-gray-900">QuizMaster</h1>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation - FIXED: No nested <a> tags */}
           <nav className="flex-1 p-4 space-y-2">
             {navItems.map((item) => {
               const isActive = 
@@ -50,19 +54,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
               return (
                 <Link key={item.path} href={item.path}>
-                  <a
+                  <div // Changed from <a> to <div>
                     className={`
-                      flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                      flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer
                       ${isActive 
                         ? 'bg-blue-50 text-blue-700 border border-blue-200' 
                         : 'text-gray-700 hover:bg-gray-100'
                       }
                     `}
-                    onClick={() => onClose()}
+                    onClick={handleNavClick}
                   >
                     <span className="text-lg">{item.icon}</span>
                     <span>{item.label}</span>
-                  </a>
+                  </div>
                 </Link>
               );
             })}

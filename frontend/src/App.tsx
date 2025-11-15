@@ -1,4 +1,4 @@
-import { Route, Switch } from 'wouter';
+import { Route, Switch, Redirect } from 'wouter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -10,9 +10,10 @@ import { RegisterForm } from './components/Auth/RegisterForm';
 import { AdminLayout } from './components/Layout/AdminLayout';
 
 // Quiz Components
-import { QuizTakePage } from './components/Quiz/QuizTakePage';
 import { QuizListPage } from './components/Quiz/QuizListPage';
+import { QuizTakePage } from './components/Quiz/QuizTakePage';
 import { QuizResultsPage } from './components/Quiz/QuizResultsPage';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -28,13 +29,26 @@ function App() {
             <Route path="/quiz/:id" component={QuizTakePage} />
             <Route path="/quiz/:id/results" component={QuizResultsPage} />
             
-            {/* Admin Routes */}
-            <Route path="/admin/:rest*">
+            {/* Admin Routes - All /admin routes go to AdminLayout */}
+            <Route path="/admin">
+              <AdminLayout />
+            </Route>
+            <Route path="/admin/:any*">
               <AdminLayout />
             </Route>
             
-            {/* 404 */}
-            <Route>404 - Page Not Found</Route>
+            {/* 404 Page */}
+            <Route>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+                  <p className="text-gray-600 mb-8">Page not found</p>
+                  <a href="/" className="text-blue-600 hover:text-blue-500">
+                    Go back home
+                  </a>
+                </div>
+              </div>
+            </Route>
           </Switch>
         </div>
       </AuthProvider>

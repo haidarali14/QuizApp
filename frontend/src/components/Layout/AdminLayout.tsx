@@ -1,20 +1,32 @@
 import React, { useState } from 'react';
-import { Route, Switch, useLocation } from 'wouter';
+import { Route, Switch, useLocation, Redirect } from 'wouter';
 import { useAuth } from '../../contexts/AuthContext';
 import { Sidebar } from './Sidebar';
 import { AdminDashboard } from '../Admin/AdminDashboard';
 import { QuizCreator } from '../Admin/QuizCreator';
 import { AdminQuizzes } from '../Admin/AdminQuizzes';
+import { EditQuiz } from '../Admin/EditQuiz';
 
 export const AdminLayout: React.FC = () => {
-  const { admin } = useAuth();
+  const { admin, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Redirect to login if not authenticated
   if (!admin) {
-    window.location.href = '/login';
-    return null;
+    return <Redirect to="/login" />;
   }
 
   return (
@@ -61,8 +73,10 @@ export const AdminLayout: React.FC = () => {
             <Route path="/admin" component={AdminDashboard} />
             <Route path="/admin/create" component={QuizCreator} />
             <Route path="/admin/quizzes" component={AdminQuizzes} />
-            <Route path="/admin/edit/:id">
-              {(params) => <div>Edit Quiz {params.id} - Coming Soon</div>}
+            <Route path="/admin/edit/:id" component={EditQuiz} />
+            {/* Catch all for /admin/* routes - Fixed syntax */}
+            <Route path="/admin/:rest*">
+              {() => <div>Admin route not found</div>}
             </Route>
           </Switch>
         </main>

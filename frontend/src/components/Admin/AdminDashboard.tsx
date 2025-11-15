@@ -6,9 +6,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 export const AdminDashboard: React.FC = () => {
   const { admin } = useAuth();
-  const { data: quizzes, isLoading } = useQuery({
+  const { data: quizzes, isLoading, error } = useQuery({
     queryKey: ['admin-quizzes'],
-    queryFn: () => quizAPI.getMyQuizzes().then(res => res.data)
+    queryFn: () => quizAPI.getMyQuizzes().then(res => res.data),
+    retry: 1
   });
 
   const totalQuizzes = quizzes?.length || 0;
@@ -108,7 +109,12 @@ export const AdminDashboard: React.FC = () => {
           </Link>
         </div>
 
-        {isLoading ? (
+        {error ? (
+          <div className="text-center py-8">
+            <div className="text-yellow-600 text-lg mb-2">⚠️ Authentication Required</div>
+            <p className="text-gray-600">Please try refreshing the page or logging in again.</p>
+          </div>
+        ) : isLoading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading quizzes...</p>
