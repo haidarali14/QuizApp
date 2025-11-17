@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Routes
 import authRoutes from './routes/auth';
@@ -40,7 +41,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 
@@ -52,6 +53,18 @@ app.get('/api/health', (req, res) => {
     message: 'Backend is running correctly'
   });
 });
+
+
+// ✅ ✅ IMPORTANT — SERVE FRONTEND BUILD (Fix for 404 on React routes)
+const __dirnamePath = path.resolve();
+
+app.use(express.static(path.join(__dirnamePath, 'frontend', 'dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirnamePath, 'frontend', 'dist', 'index.html'));
+});
+// ✅ END FIX
+
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI!)
