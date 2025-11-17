@@ -18,7 +18,7 @@ export const AdminQuizzes: React.FC = () => {
     mutationFn: (quizId: string) => quizAPI.delete(quizId),
     onSuccess: () => {
       // Refresh the quizzes list
-      queryClient.invalidateQueries(['admin-quizzes']);
+      queryClient.invalidateQueries({ queryKey: ['admin-quizzes'] });
       setDeleteError('');
     },
     onError: (error: any) => {
